@@ -1,0 +1,55 @@
+# Tugas Week 2 - Sistem Manajemen Sepatu
+
+## Fitur 1 — Dark Mode Toggle
+Fungsi: Mengubah tampilan halaman antara mode terang dan mode gelap.
+
+- Saat halaman pertama kali dibuka, script mengecek `localStorage`. Jika tema sebelumnya adalah "dark", class `dark-mode` langsung diterapkan ke `<body>`.
+- Saat tombol diklik, `classList.toggle("dark-mode")` menambahkan atau menghapus class tersebut secara otomatis.
+- Pilihan tema disimpan ke `localStorage` agar tetap diingat meskipun halaman di-refresh atau browser ditutup lalu dibuka kembali.
+- Label tombol berubah mengikuti tema yang aktif ("Mode Gelap" / "Mode Terang").
+
+
+## Fitur 2 — Update Counter Wishlist (`updateWishlistCount`)
+Fungsi: Memperbarui angka jumlah item wishlist yang ditampilkan di navbar.
+
+- Mengambil data wishlist dari `sessionStorage` dan mem-parse-nya dari format JSON menjadi array.
+- Jika data belum ada, default-nya adalah array kosong `[]`.
+- Nilai `length` dari array tersebut langsung ditampilkan di elemen `<span id="wishlist-count">` pada navbar.
+- Fungsi ini dipanggil setiap kali ada perubahan pada wishlist (tambah/hapus).
+
+
+## Fitur 3 — Tambah Item ke Wishlist (`aktifkanTombolWishlist`)
+Fungsi: Menangani klik tombol "Wishlist" pada setiap card produk untuk menambahkan barang ke daftar wishlist.
+
+- `querySelectorAll(".btn-wishlist")` mengambil semua tombol wishlist sekaligus, lalu setiap tombol diberi event listener `click`.
+- `e.target.closest('.card-body')` digunakan untuk menelusuri DOM ke atas dan menemukan elemen `.card-body` induk dari tombol yang diklik, sehingga nama barang bisa diambil dari `.card-title` yang benar.
+- Wishlist diambil dari `sessionStorage`. Jika barang belum ada di array, barang ditambahkan lalu disimpan kembali dengan `JSON.stringify`.
+- Jika barang sudah ada, muncul peringatan duplikat agar tidak ada item ganda.
+- Setelah berhasil ditambahkan, `updateWishlistCount()` dipanggil untuk memperbarui counter di navbar.
+
+
+## Fitur 4 — Tampilkan Isi Wishlist (`tampilkanWhislist`)
+Fungsi: Menampilkan daftar item wishlist di dalam modal popup.
+
+- Dipanggil melalui atribut `onclick="tampilkanWhislist()"` pada tombol navbar, sebelum modal Bootstrap terbuka.
+- `daftarWishlist.innerHTML = ""` mengosongkan list terlebih dahulu untuk mencegah item tampil double jika modal dibuka berkali-kali.
+- Jika wishlist kosong, menampilkan teks "Wishlist kosong".
+- Jika ada item, setiap nama barang dibuatkan elemen `<li>` secara dinamis dengan `createElement` dan ditambahkan ke dalam `<ul>` menggunakan `appendChild`.
+
+
+## Fitur 5 — Hapus Semua Wishlist (`hapusWishlist`)
+Fungsi: Mengosongkan seluruh isi wishlist setelah konfirmasi dari pengguna.
+
+- `confirm()` memunculkan dialog bawaan browser dengan tombol OK dan Cancel.
+- Jika pengguna menekan OK, data wishlist dihapus dari `sessionStorage` menggunakan `removeItem`.
+- Setelah dihapus, `tampilkanWhislist()` dipanggil agar isi modal langsung diperbarui.
+- `updateWishlistCount()` dipanggil agar di navbar kembali ke angka 0.
+
+
+## Fitur 6 — Beli & Pengurangan Stok (`aktifkanTombolBeli`)
+Fungsi: Menangani klik tombol "Beli" dan mengurangi stok barang secara langsung di halaman.
+
+- Semua tombol "Beli" (class `.btn-detail`) diambil sekaligus lalu masing-masing diberi event listener.
+- Angka stok diambil dari teks elemen `.stok-text` menggunakan `.replace('Stok: ', '')` untuk membuang labelnya, lalu dikonversi ke integer dengan `parseInt`.
+- Jika stok masih lebih besar dari 0, maka stok dikurangi 1, teks di DOM langsung diperbarui, dan muncul notifikasi berhasil beli.
+- Jika stok sudah 0: muncul peringatan habis, tombol dinonaktifkan dengan `disabled = true`, dan teks tombol diganti menjadi "Habis" agar pengguna tidak bisa klik lagi.
