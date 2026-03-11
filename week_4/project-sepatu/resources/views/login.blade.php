@@ -1,11 +1,3 @@
-<?php
-session_start();
-
-if (isset($_SESSION['user'])) {
-    header("Location: index.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,7 +5,7 @@ if (isset($_SESSION['user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem Manajemen Sepatu</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
 
@@ -36,13 +28,15 @@ if (isset($_SESSION['user'])) {
             <h4 class="login-title">Login Akun</h4>
             <p class="login-subtitle">Masuk untuk mengelola data sepatu</p>
 
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger py-2">
-                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
-            <?php endif; ?>
+            @endif
 
-            <form method="POST" action="controller/proses_login.php">
+            <form method="POST" action="{{route('login.proses')}}">
+                @csrf <input type="text" name="username" class="form-control" 
+                value="{{ request()->cookie('username') ?? '' }}" required>
                 <div class="mb-3">
                     <label class="form-label">Username</label>
                     <input type="text" name="username" class="form-control"
@@ -76,12 +70,7 @@ if (isset($_SESSION['user'])) {
         &copy; 2026 Sistem Manajemen Sepatu
     </footer>
 
-    <script>
-        function togglePassword() {
-            const input = document.getElementById('password');
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-    </script>
+    <script src="{{ asset('js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

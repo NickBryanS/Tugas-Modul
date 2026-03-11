@@ -8,7 +8,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
   </head>
   <body>
     <!-- Navbar -->
@@ -29,6 +29,14 @@
           Wishlist (<span id="wishlist-count">0</span>)
       </button>
       <button id="btn-theme" class="btn btn-outline-light btn-sm">Mode Gelap</button>
+      @if(session()->has('user'))
+        <span class="text-white me-3">
+          {{ session('user') }}
+        </span>
+        <a href="{{ route('logout') }}" class="btn btn-danger btn-sm">Logout</a>
+      @else
+        <a href="{{ route('login') }}" class="btn btn-warning btn-sm">Login</a>
+      @endif
       </div>
     </nav>
     <!-- Hero Section -->
@@ -75,7 +83,7 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <img
-              src="assets/AIR_FORCE_1.jpg"
+              src="{{ asset('assets/AIR_FORCE_1.jpg') }}"
               class="card-img-top"
               alt="Sepatu 1"
             />
@@ -94,7 +102,7 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <img
-              src="assets/AIR_JORDAN_1_LOW.jpg"
+              src="{{ asset('assets/AIR_JORDAN_1_LOW.jpg') }}"
               class="card-img-top"
               alt="Sepatu 2"
             />
@@ -113,7 +121,7 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <img
-              src="assets/NIKE_P_6000.jpg"
+              src="{{ asset('assets/NIKE_P_6000.jpg') }}"
               class="card-img-top"
               alt="Sepatu 3"
             />
@@ -197,99 +205,7 @@
       © 2026 Sistem Manajemen Sepatu
     </footer>
 
-    <script>
-      const btnTheme = document.getElementById("btn-theme");
-      const body = document.body;
-      if (localStorage.getItem("theme") === "dark") {
-        body.classList.add("dark-mode");
-        btnTheme.textContent = "Mode Terang";
-      }
-
-      btnTheme.addEventListener("click", () => {
-        body.classList.toggle("dark-mode"); 
-        if (body.classList.contains("dark-mode")) {
-          localStorage.setItem("theme", "dark");
-          btnTheme.textContent = "Mode Terang";
-        } else {
-          localStorage.setItem("theme", "light");
-          btnTheme.textContent = "Mode Gelap";
-        }
-      });
-
-      function updateWishlistCount() {
-        const wishlistCount = document.getElementById("wishlist-count");
-        const wishlistItems = JSON.parse(sessionStorage.getItem("wishlist")) || [];
-        wishlistCount.textContent = wishlistItems.length;
-      }
-
-      function aktifkanTombolWishlist() {
-        const tombolWishlist = document.querySelectorAll(".btn-wishlist");
-        tombolWishlist.forEach(function(tombol) {
-          tombol.addEventListener('click', function(e) {
-            const cardBody = e.target.closest('.card-body');
-            const namaBarang = cardBody.querySelector('.card-title').innerText;
-            let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
-            if (!wishlist.includes(namaBarang)) {
-              wishlist.push(namaBarang);
-              sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
-              alert(namaBarang + ' berhasil ditambahkan ke wishlist!');
-              updateWishlistCount();
-            } else {
-              alert(namaBarang + ' sudah ada di wishlist!');
-            }
-          });
-        });
-      }
-
-      function tampilkanWhislist() {
-        const daftarWishlist = document.getElementById("daftar-wishlist");
-        daftarWishlist.innerHTML = "";
-        const wishlistItems = JSON.parse(sessionStorage.getItem("wishlist")) || [];
-        if (wishlistItems.length === 0) {
-          daftarWishlist.innerHTML = "<li class='list-group-item'>Wishlist kosong</li>";
-        } else {  
-          wishlistItems.forEach(function(item) {
-            const li = document.createElement("li");
-            li.classList.add("list-group-item");
-            li.textContent = item;
-            daftarWishlist.appendChild(li);
-          });
-        }
-      }
-
-      function hapusWishlist() {
-        if (confirm("Apakah Anda yakin ingin mengosongkan wishlist?")) {
-          sessionStorage.removeItem("wishlist");
-          tampilkanWhislist();
-          updateWishlistCount();
-        }
-      }
-
-      updateWishlistCount();
-      aktifkanTombolWishlist();
-
-      function aktifkanTombolBeli() {
-        const tombolBeli = document.querySelectorAll(".btn-detail");
-        tombolBeli.forEach(function(tombol) {
-          tombol.addEventListener('click', function(e) {
-            const cardBody = e.target.closest('.card-body');
-            const stokElement = cardBody.querySelector('.stok-text');
-              let stok = parseInt(stokElement.innerText.replace('Stok: ', ''));
-                if (stok > 0) {
-                  stok--;
-                  stokElement.innerText = 'Stok: ' + stok;
-                  const namaBarang = cardBody.querySelector('.card-title').innerText;
-                  alert('Berhasil membeli ' + namaBarang);
-                } else {
-                  alert('Maaf, stok barang habis!');
-                  e.target.disabled = true;
-                  e.target.innerText = 'Habis';
-                }
-          });
-        });
-      }
-      aktifkanTombolBeli();
-    </script>
+    <script src="{{ asset('js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
