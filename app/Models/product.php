@@ -14,6 +14,7 @@ class product extends Model
         'product_name',
         'product_price',
         'product_stock',
+        'product_image'
     ];
 
     public function category(){
