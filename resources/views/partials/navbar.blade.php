@@ -9,33 +9,42 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="{{ route('products') }}">Produk</a>
                 </li>
-                </ul>
+            </ul>
         </div>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 
-                <button class="btn btn-outline-warning btn-sm me-2" data-bs-toggle="modal"
-                    data-bs-target="#wishlistModal" onclick="tampilkanWishlist()">
-                    ⭐ Wishlist (<span id="wishlist-count">0</span>)
-                </button>
+            <button class="btn btn-outline-warning btn-sm me-2" data-bs-toggle="modal"
+                data-bs-target="#wishlistModal" onclick="tampilkanWishlist()">
+                ⭐ Wishlist (<span id="wishlist-count">0</span>)
+            </button>
 
-                <button id="btn-theme" class="btn btn-outline-light btn-sm me-2">
-                    Mode Gelap
-                </button>
+            <button id="btn-theme" class="btn btn-outline-light btn-sm me-2">
+                Mode Gelap
+            </button>
 
-                @if (session()->has('user'))
-                    <span class="text-white me-3">
-                        {{ session('user') }}
-                    </span>
+            @auth
+                <span class="text-white me-3">
+                    {{ Auth::user()->name }}
+                </span>
 
-                    <a href="{{ route('logout') }}" class="btn btn-danger btn-sm">
+                @csrf 
+                <form action="{{ route('logout') }}" method="POST" class="d-inline m-0 p-0">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-sm">
                         Logout
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-warning btn-sm">
-                        Login
-                    </a>
-                @endif
+                    </button>
+                </form>
+            @endauth
 
-            </div>
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-warning btn-sm me-2">
+                    Login
+                </a>
+                <a href="{{ route('register') }}" class="btn btn-outline-light btn-sm">
+                    Register
+                </a>
+            @endguest
+
+        </div>
     </div>
 </nav>
