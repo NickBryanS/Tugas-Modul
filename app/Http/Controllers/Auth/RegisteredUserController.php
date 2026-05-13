@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Http; 
 
 class RegisteredUserController extends Controller
 {
@@ -30,6 +31,18 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $responseHttp = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $responseData = $responseHttp->json();
+
+        if (!$responseHttp->successful() || !$responseData['success']) {
+            return back()->withErrors(['g-recaptcha-response' => 'Validasi reCAPTCHA gagal! Anda robot?'])->withInput();
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -46,5 +59,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');    }
+        return redirect('/');    
+    }
 }
